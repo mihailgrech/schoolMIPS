@@ -26,18 +26,23 @@ module sm_cpu
     wire        aluSrc;
     wire        aluZero;
     wire [ 2:0] aluControl;
+	wire	    pcJ; // J
 
     //program counter
     wire [31:0] pc;
     wire [31:0] pcBranch;
     wire [31:0] pcNext  = pc + 1;
-    wire [31:0] pc_new   = ~pcSrc ? pcNext : pcBranch;
-    sm_register r_pc(clk ,rst_n, pc_new, pc);
-
+	wire [31:0] pcJump; // J
+	wire [31:0] pc_old = ~pcSrc ? pcNext : pcBranch; // J
+	wire [31:0] pc_new = pcJ ? pcJump : pc_old; // J
+    sm_register r_pc(clk ,rst_n, pc_old, pc);
+   
     //program memory access
     assign imAddr = pc;
     wire [31:0] instr = imData;
-
+	 
+	assign pcJump = {pcNext[31:26], instr[25:0]}; // J
+	
     //debug register access
     wire [31:0] rd0;
     assign regData = (regAddr != 0) ? rd0 : pc;
@@ -85,6 +90,7 @@ module sm_cpu
         .cmdOper    ( instr[31:26] ),
         .cmdFunk    ( instr[ 5:0 ] ),
         .aluZero    ( aluZero      ),
+		.pcJ        ( pcJ          ),
         .pcSrc      ( pcSrc        ), 
         .regDst     ( regDst       ), 
         .regWrite   ( regWrite     ), 
@@ -99,6 +105,7 @@ module sm_control
     input      [5:0] cmdOper,
     input      [5:0] cmdFunk,
     input            aluZero,
+	output reg       pcJ,
     output           pcSrc, 
     output reg       regDst, 
     output reg       regWrite, 
@@ -131,6 +138,11 @@ module sm_control
 
             { `C_BEQ,   `F_ANY  } : begin branch = 1'b1; condZero = 1'b1; aluControl = `ALU_SUBU; end
             { `C_BNE,   `F_ANY  } : begin branch = 1'b1; aluControl = `ALU_SUBU; end
+            
+            { `C_J,     `F_ANY  } : begin regWrite = 1'b0; pcJ = 1'b1; end // J
+            { `C_SPEC2, `F_MUL  } : begin regDst = 1'b1; regWrite = 1'b1; aluControl = `ALU_MUL; end // MUL
+            { `C_SPEC,  `F_AND  } : begin regDst = 1'b1; regWrite = 1'b1; aluControl = `ALU_AND; end // AND
+            { `C_ORI,   `F_ANY  } : begin regWrite = 1'b1; aluSrc = 1'b1; aluControl = `ALU_OR;  end // ORI
         endcase
     end
 endmodule
@@ -154,6 +166,8 @@ module sm_alu
             `ALU_SRL  : result = srcB >> shift;
             `ALU_SLTU : result = (srcA < srcB) ? 1 : 0;
             `ALU_SUBU : result = srcA - srcB;
+			`ALU_MUL  : result = srcA * srcB; // MUL
+            `ALU_AND  : result = srcA & srcB; // AND
         endcase
     end
 
