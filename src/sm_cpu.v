@@ -35,12 +35,12 @@ module sm_cpu
 	wire [31:0] pcJump; // J
 	wire [31:0] pc_old = ~pcSrc ? pcNext : pcBranch; // J
 	wire [31:0] pc_new = pcJ ? pcJump : pc_old; // J
-    sm_register r_pc(clk ,rst_n, pc_old, pc);
+    sm_register r_pc(clk ,rst_n, pc_new, pc);
    
     //program memory access
     assign imAddr = pc;
     wire [31:0] instr = imData;
-	 
+	
 	assign pcJump = {pcNext[31:26], instr[25:0]}; // J
 	
     //debug register access
@@ -123,7 +123,8 @@ module sm_control
         regWrite    = 1'b0;
         aluSrc      = 1'b0;
         aluControl  = `ALU_ADD;
-
+        
+        pcJ = 1'b0;
         casez( {cmdOper,cmdFunk} )
             default               : ;
 
