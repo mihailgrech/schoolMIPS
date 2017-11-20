@@ -13,7 +13,7 @@ module sm_testbench;
     reg         rst_n;
     reg  [ 4:0] regAddr;
     wire [31:0] regData;
-    wire [7:0]  additionalInput;
+    wire [ 7:0] additionalInput;
     // ***** DUT start ************************
 
     //instruction memory
@@ -105,6 +105,11 @@ module sm_testbench;
 
                 { `C_BEQ,   `F_ANY  } : $write ("beq   $%1d, $%1d, %1d", cmdRs, cmdRt, cmdImmS + 1);
                 { `C_BNE,   `F_ANY  } : $write ("bne   $%1d, $%1d, %1d", cmdRs, cmdRt, cmdImmS + 1);
+                
+                { `C_J,     `F_ANY  } : $write ("jump  $%1d", instr[25:0]);
+                { `C_SPEC2, `F_MUL  } : $write ("addu  $%1d, $%1d, $%1d", cmdRd, cmdRs, cmdRt);
+                { `C_SPEC,  `F_AND  } : $write ("addu  $%1d, $%1d, $%1d", cmdRd, cmdRs, cmdRt);
+                { `C_ORI,   `F_ANY  } : $write ("addiu $%1d, $%1d, %1d", cmdRt, cmdRs, cmdImm);
             endcase
         end
 
