@@ -14,6 +14,7 @@ module sm_cpu
 (
     input           clk,        // clock
     input           rst_n,      // reset
+    input   [ 7:0]  additionalInput, // for lab2
     input   [ 4:0]  regAddr,    // debug access reg address
     output  [31:0]  regData,    // debug access reg data
     output  [31:0]  imAddr,     // instruction memory address
