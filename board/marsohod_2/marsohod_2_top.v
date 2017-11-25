@@ -19,6 +19,7 @@ module marsohod_2_top(
     wire          clk;
     wire          clkIn     =  CLK100MHZ;
     wire          rst_n     =  KEY0;
+    wire [7:0]    extraInput;
     wire          clkEnable =  ~KEY1;
     wire [31:0]   regData;
 
@@ -27,6 +28,7 @@ module marsohod_2_top(
     (
         .clkIn      ( clkIn     ),
         .rst_n      ( rst_n     ),
+		  .extraInput ( extraInput ),
         .clkDevide  ( 4'b0010   ),
         .clkEnable  ( clkEnable ),
         .clk        ( clk       ),
@@ -35,11 +37,10 @@ module marsohod_2_top(
     );
 	 
 	 // dip switcher
-	 wire [2:0] dipSwitcher;
-	 assign dipSwitcher[0] = GPIO1_D[10];
+	 assign extraInput = {2'b00, GPIO1_D[12:7] };
 	 
 	 // led indicators
-    assign LED[3:0] = regData[7:4];
+    assign LED[3:0] = regData[3:0];
 	 
 	 // 7 segment indicator
 	 wire [31:0] h7segment = regData; // display it on a seven segment indicator
@@ -60,15 +61,15 @@ module marsohod_2_top(
 			.seven_segments (seven_segments)
 	 );
 	 	 	 
-	 assign GPIO0_D[5] = seven_segments[10]; // a
-	 assign GPIO0_D[6] = seven_segments[9];  // f
-	 assign GPIO0_D[7] = seven_segments[6];  // b
-	 assign GPIO0_D[8] = seven_segments[4];  // g
-	 assign GPIO0_D[9] = seven_segments[3];  // c
-	 assign GPIO0_D[10] = seven_segments[1]; // d
-	 assign GPIO0_D[11] = seven_segments[0]; // e
+	 assign GPIO0_D[5]  = seven_segments[10]; // a
+	 assign GPIO0_D[6]  = seven_segments[9];  // f
+	 assign GPIO0_D[7]  = seven_segments[6];  // b
+	 assign GPIO0_D[8]  = seven_segments[4];  // g
+	 assign GPIO0_D[9]  = seven_segments[3];  // c
+	 assign GPIO0_D[10] = seven_segments[1];  // d
+	 assign GPIO0_D[11] = seven_segments[0];  // e
 	 
-	 assign GPIO1_D[5] = seven_segments[7];
-	 assign GPIO1_D[6] = seven_segments[8];
-	 assign GPIO1_D[7] = seven_segments[11];	 
+	 assign GPIO0_D[12] = seven_segments[11];
+	 assign GPIO1_D[5]  = seven_segments[8];
+	 assign GPIO1_D[6]  = seven_segments[7];	 
 endmodule
