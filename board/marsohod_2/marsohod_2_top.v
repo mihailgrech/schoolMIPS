@@ -28,7 +28,7 @@ module marsohod_2_top(
     (
         .clkIn      ( clkIn     ),
         .rst_n      ( rst_n     ),
-		  .extraInput ( extraInput ),
+        .extraInput ( extraInput),
         .clkDevide  ( 4'b0010   ),
         .clkEnable  ( clkEnable ),
         .clk        ( clk       ),
@@ -40,7 +40,7 @@ module marsohod_2_top(
 	 assign extraInput = {2'b00, GPIO1_D[12:7] };
 	 
 	 // led indicators
-    assign LED[3:0] = regData[3:0];
+     assign LED[3:0] = regData[3:0];
 	 
 	 // 7 segment indicator
 	 wire [31:0] h7segment = regData; // display it on a seven segment indicator
@@ -54,11 +54,11 @@ module marsohod_2_top(
 	 // we can display only 1 digit at the same time, so let's blink
 	 sm_hex_display_blink sm_hex_display_blink
 	 (
-			.digit1 (HEX0_D),
-			.digit2 (HEX1_D),
-			.digit3 (HEX2_D),
-			.clkIn  (clkIn ),
-			.seven_segments (seven_segments)
+        .digit1 (HEX0_D),
+        .digit2 (HEX1_D),
+        .digit3 (HEX2_D),
+        .clkIn  (clkIn ),
+        .seven_segments (seven_segments)
 	 );
 	 	 	 
 	 assign GPIO0_D[5]  = seven_segments[10]; // a
