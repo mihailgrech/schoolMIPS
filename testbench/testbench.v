@@ -108,7 +108,7 @@ module sm_testbench;
                 
                 { `C_J,     `F_ANY  } : $write ("jump  $%1d", instr[25:0]);
                 { `C_SPEC2, `F_MUL  } : $write ("addu  $%1d, $%1d, $%1d", cmdRd, cmdRs, cmdRt);
-                { `C_SPEC,  `F_AND  } : $write ("addu  $%1d, $%1d, $%1d", cmdRd, cmdRs, cmdRt);
+                { `C_LOAD,  `F_ANY  } : $write ("LOAD from input $%1d, $%1d, %1d", cmdRt, cmdRs, cmdImm);
                 { `C_ORI,   `F_ANY  } : $write ("addiu $%1d, $%1d, %1d", cmdRt, cmdRs, cmdImm);
             endcase
         end

@@ -16,7 +16,7 @@
 `define ALU_SLTU    3'b100
 `define ALU_SUBU    3'b101
 `define ALU_MUL     3'b110
-`define ALU_AND     3'b111
+`define ALU_LOAD    3'b111
 
 //instruction operation code
 `define C_SPEC      6'b000000 // Special instructions (depends on function field)
@@ -31,6 +31,7 @@
                               //         if (Rs != Rt) PC += (int)offset
 `define C_J         6'b000010
 `define C_ORI       6'b001101
+`define C_LOAD      6'b100111
 
 //instruction function field
 `define F_ADDU      6'b100001 // R-type, Integer Add Unsigned
@@ -45,4 +46,4 @@
                               //         Rd = Rs – Rt
 `define F_ANY       6'b?????? 
 `define F_MUL       6'b000010
-`define F_AND       6'b100100
+//`define F_AND       6'b100100

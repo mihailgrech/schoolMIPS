@@ -4,7 +4,7 @@ module sm_top
 (
     input           clkIn,
     input           rst_n,
-    input   [ 7:0 ] additionalInput,
+    input   [ 7:0 ] extraInput,
     input   [ 3:0 ] clkDevide,
     input           clkEnable,
     output          clk,
@@ -40,7 +40,7 @@ module sm_top
     (
         .clk        ( clk       ),
         .rst_n      ( rst_n     ),
-        .additionalInput ( additionalInput ), // for lab2
+        .extraInput ( extraInput), // for lab2
         .regAddr    ( addr      ),
         .regData    ( regData   ),
         .imAddr     ( imAddr    ),
