@@ -181,7 +181,7 @@ module sm_alu
     input [7:0] in;
     output reg [31:0] out;
     begin
-        out = (srcB == 1) ? {in, {10{(in[0] ^ in[1]) ^ (in[2] ^ in[3]) ^ (in[4] ^ in[5]) ^ (in[6] ^ in[7])}}}: in;
+        out = (srcB == 1) ? {in, {32-8{(in[0] ^ in[1]) ^ (in[2] ^ in[3]) ^ (in[4] ^ in[5]) ^ (in[6] ^ in[7])}}}: in;
     end
 	 endtask
 
