@@ -13,7 +13,7 @@ module sm_testbench;
     reg         rst_n;
     reg  [ 4:0] regAddr;
     wire [31:0] regData;
-    wire [ 7:0] additionalInput;
+    wire [ 7:0] extraInput;
     // ***** DUT start ************************
 
     //instruction memory
@@ -26,7 +26,7 @@ module sm_testbench;
     (
         .clk     ( clk     ),
         .rst_n   ( rst_n   ),
-        .additionalInput ( additionalInput ),
+        .extraInput ( extraInput ),
         .regAddr ( regAddr ),
         .regData ( regData ),
         .imAddr  ( imAddr  ),
