@@ -32,16 +32,16 @@ module sm_cpu
     wire [31:0] pc;
     wire [31:0] pcBranch;
     wire [31:0] pcNext  = pc + 1;
-	wire [31:0] pcJump; // J
-	wire [31:0] pc_old = ~pcSrc ? pcNext : pcBranch; // J
-	wire [31:0] pc_new = pcJ ? pcJump : pc_old; // J
+    wire [31:0] pcJump; // J
+    wire [31:0] pc_old = ~pcSrc ? pcNext : pcBranch; // J
+    wire [31:0] pc_new = pcJ ? pcJump : pc_old; // J
     sm_register r_pc(clk ,rst_n, pc_new, pc);
    
     //program memory access
     assign imAddr = pc;
     wire [31:0] instr = imData;
 	
-	assign pcJump = {pcNext[31:26], instr[25:0]}; // J
+    assign pcJump = {pcNext[31:26], instr[25:0]}; // J
 	
     //debug register access
     wire [31:0] rd0;
@@ -105,7 +105,7 @@ module sm_control
     input      [5:0] cmdOper,
     input      [5:0] cmdFunk,
     input            aluZero,
-	output reg       pcJ,
+    output reg       pcJ,
     output           pcSrc, 
     output reg       regDst, 
     output reg       regWrite, 
@@ -167,7 +167,7 @@ module sm_alu
             `ALU_SRL  : result = srcB >> shift;
             `ALU_SLTU : result = (srcA < srcB) ? 1 : 0;
             `ALU_SUBU : result = srcA - srcB;
-			`ALU_MUL  : result = srcA * srcB; // MUL
+            `ALU_MUL  : result = srcA * srcB; // MUL
             `ALU_AND  : result = srcA & srcB; // AND
         endcase
     end
