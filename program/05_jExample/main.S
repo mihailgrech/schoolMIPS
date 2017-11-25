@@ -1,9 +1,9 @@
 init:
-        li $a0, 12
+        li $v0, 12
         j jumpHere
-        li $a0, 13
 notToDo:
-        li $a0, 14
+        li $v0, 13
+        li $v0, 14
 jumpHere:
-        li $a0, 16
-        li $a0, 17
+        li $v0, 16
+        li $v0, 17
