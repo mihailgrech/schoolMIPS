@@ -26,7 +26,7 @@ module sm_cpu
     wire        aluSrc;
     wire        aluZero;
     wire [ 2:0] aluControl;
-	wire	    pcJ; // J
+    wire	    pcJ; // J
 
     //program counter
     wire [31:0] pc;
