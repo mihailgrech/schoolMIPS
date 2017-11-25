@@ -15,9 +15,12 @@
 ##     return y;
 ## }
 
+
         .text
 
 init:   li      $a0, 82         ## x = 82
+        ## take a look at example №6 --> 9ca40000
+        ## LOAD $a0             ## Load from additional input to a0 register
         li      $v0, 0          ## calculation result reset
 
 sqrt:   li      $t0, 0x40000000 ## m = 0x40000000
