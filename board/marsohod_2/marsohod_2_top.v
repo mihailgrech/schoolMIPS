@@ -32,18 +32,18 @@ module marsohod_2_top(
         .clkDevide  ( 4'b0010   ),
         .clkEnable  ( clkEnable ),
         .clk        ( clk       ),
-        .regAddr    ( 4'b0010   ),
+        .regAddr    ( 5'b00010  ),
         .regData    ( regData   )
     );
 	 
 	 // dip switcher
-	 assign extraInput = {2'b00, GPIO1_D[12:7] };
+    assign extraInput = {2'b00, GPIO1_D[12:7]};
 	 
 	 // led indicators
-     assign LED[3:0] = regData[3:0];
+    assign LED[3:0] = regData[3:0];
 	 
 	 // 7 segment indicator
-	 wire [31:0] h7segment = regData; // display it on a seven segment indicator
+	 wire [31:0] h7segment = extraInput; //regData; // display it on a seven segment indicator
 	 wire [11:0] seven_segments; // 12 bit to control segments of the indicator
 
 	 // get 7bit number for the indicator
@@ -69,7 +69,7 @@ module marsohod_2_top(
 	 assign GPIO0_D[10] = seven_segments[1];  // d
 	 assign GPIO0_D[11] = seven_segments[0];  // e
 	 
-	 assign GPIO0_D[12] = seven_segments[11];
+	 assign GPIO0_D[12] = seven_segments[7];
 	 assign GPIO1_D[5]  = seven_segments[8];
-	 assign GPIO1_D[6]  = seven_segments[7];	 
+	 assign GPIO1_D[6]  = seven_segments[11];	 
 endmodule
