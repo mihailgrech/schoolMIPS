@@ -20,7 +20,7 @@ module marsohod_2_top(
         .clkDevide  ( 4'b0010   ),
         .clkEnable  ( clkEnable ),
         .clk        ( clk       ),
-        .regAddr    ( 4'b0010   ),
+        .regAddr    ( 5'b00010  ),
         .regData    ( regData   )
     );
 
