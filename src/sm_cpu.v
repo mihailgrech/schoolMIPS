@@ -18,7 +18,7 @@ module sm_cpu
     output  [31:0]  regData,    // debug access reg data
     output  [31:0]  imAddr,     // instruction memory address
     input   [31:0]  imData,     // instruction memory data
-    input   [ 3:0]  memAddrB,   // RAM second input address // щелкаем дипом сюда и выводим значение memDataOutB // it used to be [ 4:0] 
+    input   [ 3:0]  memAddrB,   // RAM second input address
     output  [31:0]  memDataOutB // RAM second output data
     
 );
