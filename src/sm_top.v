@@ -1,4 +1,3 @@
-
 //hardware top level module
 module sm_top
 (
@@ -8,7 +7,9 @@ module sm_top
     input           clkEnable,
     output          clk,
     input   [ 4:0 ] regAddr,
-    output  [31:0 ] regData
+    output  [31:0 ] regData,
+    input   [ 3:0 ] memAddrB,
+    output  [31:0 ] memDataOutB
 );
     //metastability input filters
     wire    [ 3:0 ] devide;
@@ -37,12 +38,14 @@ module sm_top
 
     sm_cpu sm_cpu
     (
-        .clk        ( clk       ),
-        .rst_n      ( rst_n     ),
-        .regAddr    ( addr      ),
-        .regData    ( regData   ),
-        .imAddr     ( imAddr    ),
-        .imData     ( imData    )
+        .clk         ( clk         ),
+        .rst_n       ( rst_n       ),
+        .regAddr     ( addr        ),
+        .regData     ( regData     ),
+        .imAddr      ( imAddr      ),
+        .imData      ( imData      ),
+        .memAddrB    ( memAddrB    ),
+        .memDataOutB ( memDataOutB )
     );
 
 endmodule

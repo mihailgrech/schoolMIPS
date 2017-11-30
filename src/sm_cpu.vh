@@ -31,6 +31,8 @@
                               //         if (Rs != Rt) PC += (int)offset
 `define C_J         6'b000010
 `define C_ORI       6'b001101
+`define C_LW        6'b100011
+`define C_SW        6'b101011
 
 //instruction function field
 `define F_ADDU      6'b100001 // R-type, Integer Add Unsigned

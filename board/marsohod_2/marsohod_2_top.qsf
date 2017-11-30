@@ -297,21 +297,13 @@ set_global_assignment -name CYCLONEII_RESERVE_NCEO_AFTER_CONFIGURATION "USE AS R
 
 set_global_assignment -name STRATIX_DEVICE_IO_STANDARD "2.5 V"
 
-set_global_assignment -name VERILOG_FILE ../marsohod_2_top.v
 
-set_global_assignment -name VERILOG_FILE ../../../src/sm_cpu.v
-set_global_assignment -name VERILOG_FILE ../../../src/sm_hex_display.v
-set_global_assignment -name VERILOG_FILE ../../../src/sm_register.v
-set_global_assignment -name VERILOG_FILE ../../../src/sm_rom.v
-set_global_assignment -name VERILOG_FILE ../../../src/sm_top.v
 
 set_global_assignment -name SEARCH_PATH ..
 set_global_assignment -name SEARCH_PATH ../../program
 set_global_assignment -name SEARCH_PATH ../../../src
 
-set_global_assignment -name HEX_FILE ../../program/program.hex
 
-set_global_assignment -name SDC_FILE marsohod_2.sdc
 
 
 set_global_assignment -name MIN_CORE_JUNCTION_TEMP 0
@@ -324,4 +316,13 @@ set_location_assignment PIN_85 -to LED[3]
 set_location_assignment PIN_84 -to LED[2]
 set_location_assignment PIN_83 -to LED[1]
 set_location_assignment PIN_79 -to LED[0]
+set_global_assignment -name VERILOG_FILE ../../src/sm_ram.v
+set_global_assignment -name VERILOG_FILE ../marsohod_2_top.v
+set_global_assignment -name VERILOG_FILE ../../../src/sm_cpu.v
+set_global_assignment -name VERILOG_FILE ../../../src/sm_hex_display.v
+set_global_assignment -name VERILOG_FILE ../../../src/sm_register.v
+set_global_assignment -name VERILOG_FILE ../../../src/sm_rom.v
+set_global_assignment -name VERILOG_FILE ../../../src/sm_top.v
+set_global_assignment -name HEX_FILE ../../program/program.hex
+set_global_assignment -name SDC_FILE marsohod_2.sdc
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

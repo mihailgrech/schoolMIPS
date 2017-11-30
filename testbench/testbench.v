@@ -12,6 +12,8 @@ module sm_testbench;
     reg         clk;
     reg         rst_n;
     reg  [ 4:0] regAddr;
+    wire [ 3:0] memAddrB;
+    wire [31:0] memDataOutB;
     wire [31:0] regData;
 
     // ***** DUT start ************************
@@ -24,12 +26,14 @@ module sm_testbench;
     //cpu core
     sm_cpu sm_cpu
     (
-        .clk     ( clk     ),
-        .rst_n   ( rst_n   ),
-        .regAddr ( regAddr ),
-        .regData ( regData ),
-        .imAddr  ( imAddr  ),
-        .imData  ( imData  )
+        .clk         ( clk         ),
+        .rst_n       ( rst_n       ),
+        .regAddr     ( regAddr     ),
+        .regData     ( regData     ),
+        .imAddr      ( imAddr      ),
+        .imData      ( imData      ),
+        .memAddrB    ( memAddrB    ),
+        .memDataOutB ( memDataOutB )
     );
 
     // ***** DUT  end  ************************
@@ -109,6 +113,9 @@ module sm_testbench;
                 { `C_SPEC2, `F_MUL  } : $write ("addu  $%1d, $%1d, $%1d", cmdRd, cmdRs, cmdRt);
                 { `C_SPEC,  `F_AND  } : $write ("addu  $%1d, $%1d, $%1d", cmdRd, cmdRs, cmdRt);
                 { `C_ORI,   `F_ANY  } : $write ("addiu $%1d, $%1d, %1d", cmdRt, cmdRs, cmdImm);
+                 
+                { `C_LW,    `F_ANY  } : $write ("LW $%1d, $%1d, %1d", cmdRt, cmdRs, cmdImm);
+                { `C_SW,    `F_ANY  } : $write ("SW $%1d, $%1d, %1d", cmdRt, cmdRs, cmdImm);
             endcase
         end
 

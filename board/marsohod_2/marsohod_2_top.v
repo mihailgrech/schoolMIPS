@@ -10,18 +10,23 @@ module marsohod_2_top(
     wire          clkIn     =  CLK100MHZ;
     wire          rst_n     =  KEY0;
     wire          clkEnable =  ~KEY1;
-	 wire [31:0]  regData;
+    wire [31:0]   regData;
+	 
+	wire [5:0]    SW;
+	wire [31:0]   TESTTESTto7segmentFromMem;
 
     //cores
     sm_top sm_top
     (
-        .clkIn      ( clkIn     ),
-        .rst_n      ( rst_n     ),
-        .clkDevide  ( 4'b0010   ),
-        .clkEnable  ( clkEnable ),
-        .clk        ( clk       ),
-        .regAddr    ( 5'b00010  ),
-        .regData    ( regData   )
+        .clkIn          ( clkIn     ),
+        .rst_n          ( rst_n     ),
+        .clkDevide      ( 4'b0010   ),
+        .clkEnable      ( clkEnable ),
+        .clk            ( clk       ),
+        .regAddr        ( 5'b00010  ),
+        .regData        ( regData   ),
+        .memAddrB       ( SW        ),
+        .memDataOutB    ( TESTTESTto7segmentFromMem )
     );
 
     //outputs

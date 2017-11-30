@@ -17,7 +17,10 @@ module sm_cpu
     input   [ 4:0]  regAddr,    // debug access reg address
     output  [31:0]  regData,    // debug access reg data
     output  [31:0]  imAddr,     // instruction memory address
-    input   [31:0]  imData      // instruction memory data
+    input   [31:0]  imData,     // instruction memory data
+    input   [ 3:0]  memAddrB,   // RAM second input address // щелкаем дипом сюда и выводим значение memDataOutB // it used to be [ 4:0] 
+    output  [31:0]  memDataOutB // RAM second output data
+    
 );
     //control wires
     wire        pcSrc;
@@ -26,7 +29,9 @@ module sm_cpu
     wire        aluSrc;
     wire        aluZero;
     wire [ 2:0] aluControl;
-    wire        pcJ; // J
+    wire        pcJ;          // J
+    wire        memReadDataA; // read from RAM or from alu
+    wire        memWE_A;      // read or write into A input of the RAM
 
     //program counter
     wire [31:0] pc;
@@ -51,8 +56,12 @@ module sm_cpu
     wire [ 4:0] a3  = regDst ? instr[15:11] : instr[20:16];
     wire [31:0] rd1;
     wire [31:0] rd2;
-    wire [31:0] wd3;
-
+    wire [31:0] memDataOutA;
+    wire [31:0] aluResult;
+    
+    // grab the results from memDataOutA if memReadDataA == 1 otherwise from aluResult
+    wire [31:0] wd3 = memReadDataA ? memDataOutA : aluResult;
+    
     sm_register_file rf
     (
         .clk        ( clk          ),
@@ -66,14 +75,27 @@ module sm_cpu
         .wd3        ( wd3          ),
         .we3        ( regWrite     )
     );
-
-    //sign extension
+    
+    dataRAMModule ram
+    (
+        .data_a     ( rd2            ),
+        .data_b     ( 32'b0          ),
+        // when calculating the ram address, it's base in rd1 register + offset from srcB after sign extension
+        .addr_a     ( aluResult[3:0] ),
+        .addr_b     ( memAddrB       ),
+        .we_a       ( memWE_A        ),
+        .we_b       ( 1'b0           ), // b is an unused input
+        .clk        ( clk            ),
+        .q_a        ( memDataOutA    ),
+        .q_b        ( memDataOutB    )
+    );
+    
     wire [31:0] signImm = { {16 { instr[15] }}, instr[15:0] };
     assign pcBranch = pcNext + signImm;
 
     //alu
     wire [31:0] srcB = aluSrc ? signImm : rd2;
-
+    
     sm_alu alu
     (
         .srcA       ( rd1          ),
@@ -81,21 +103,23 @@ module sm_cpu
         .oper       ( aluControl   ),
         .shift      ( instr[10:6 ] ),
         .zero       ( aluZero      ),
-        .result     ( wd3          ) 
+        .result     ( aluResult    ) 
     );
 
     //control
     sm_control sm_control
     (
-        .cmdOper    ( instr[31:26] ),
-        .cmdFunk    ( instr[ 5:0 ] ),
-        .aluZero    ( aluZero      ),
-		.pcJ        ( pcJ          ),
-        .pcSrc      ( pcSrc        ), 
-        .regDst     ( regDst       ), 
-        .regWrite   ( regWrite     ), 
-        .aluSrc     ( aluSrc       ),
-        .aluControl ( aluControl   )
+        .cmdOper      ( instr[31:26] ),
+        .cmdFunk      ( instr[ 5:0 ] ),
+        .aluZero      ( aluZero      ),
+        .pcJ          ( pcJ          ),
+        .pcSrc        ( pcSrc        ), 
+        .regDst       ( regDst       ), 
+        .regWrite     ( regWrite     ), 
+        .aluSrc       ( aluSrc       ),
+        .aluControl   ( aluControl   ),
+        .memReadDataA ( memReadDataA ),
+        .memWE_A      ( memWE_A      )
     );
 
 endmodule
@@ -105,26 +129,30 @@ module sm_control
     input      [5:0] cmdOper,
     input      [5:0] cmdFunk,
     input            aluZero,
+    output           pcSrc,
+    output reg [2:0] aluControl,
     output reg       pcJ,
-    output           pcSrc, 
     output reg       regDst, 
     output reg       regWrite, 
     output reg       aluSrc,
-    output reg [2:0] aluControl
+    output reg       memReadDataA,
+    output reg       memWE_A
 );
     reg          branch;
     reg          condZero;
     assign pcSrc = branch & (aluZero == condZero);
-
+    
     always @ (*) begin
         branch      = 1'b0;
         condZero    = 1'b0;
         regDst      = 1'b0;
         regWrite    = 1'b0;
         aluSrc      = 1'b0;
+        pcJ         = 1'b0;
+        memReadDataA= 1'b0;
+        memWE_A     = 1'b0;
         aluControl  = `ALU_ADD;
         
-        pcJ = 1'b0;
         casez( {cmdOper,cmdFunk} )
             default               : ;
 
@@ -140,10 +168,13 @@ module sm_control
             { `C_BEQ,   `F_ANY  } : begin branch = 1'b1; condZero = 1'b1; aluControl = `ALU_SUBU; end
             { `C_BNE,   `F_ANY  } : begin branch = 1'b1; aluControl = `ALU_SUBU; end
             
-            { `C_J,     `F_ANY  } : begin regWrite = 1'b0; pcJ = 1'b1; end // J
+            { `C_J,     `F_ANY  } : begin pcJ = 1'b1; end // J
             { `C_SPEC2, `F_MUL  } : begin regDst = 1'b1; regWrite = 1'b1; aluControl = `ALU_MUL; end // MUL
             { `C_SPEC,  `F_AND  } : begin regDst = 1'b1; regWrite = 1'b1; aluControl = `ALU_AND; end // AND
             { `C_ORI,   `F_ANY  } : begin regWrite = 1'b1; aluSrc = 1'b1; aluControl = `ALU_OR;  end // ORI
+            
+            { `C_SW,    `F_ANY  } : begin aluSrc = 1'b1; memWE_A = 1'b1; aluControl = `ALU_ADD;  end // SW
+            { `C_LW,    `F_ANY  } : begin aluSrc = 1'b1; regWrite = 1'b1; memReadDataA = 1'b1; aluControl = `ALU_ADD; end // LW
         endcase
     end
 endmodule
