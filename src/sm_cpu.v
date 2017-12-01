@@ -20,6 +20,7 @@ module sm_cpu
     output  [31:0]  imAddr,     // instruction memory address
     input   [31:0]  imData      // instruction memory data
 );
+    assign extraInput = 8'b00101010; // comment it out when dip is used
     //control wires
     wire        pcSrc;
     wire        regDst;
@@ -28,6 +29,7 @@ module sm_cpu
     wire        aluZero;
     wire [ 2:0] aluControl;
     wire	    pcJ; // J
+    wire        extraInp;
 
     //program counter
     wire [31:0] pc;
@@ -71,17 +73,19 @@ module sm_cpu
     //sign extension
     wire [31:0] signImm = { {16 { instr[15] }}, instr[15:0] };
     assign pcBranch = pcNext + signImm;
-
+    
+    // lab 2 additional input 
+    wire [31:0] inputExpanded = {extraInput, {32-8{(extraInput[0] ^ extraInput[1]) ^ (extraInput[2] ^ extraInput[3]) ^ (extraInput[4] ^ extraInput[5]) ^ (extraInput[6] ^ extraInput[7])}}};
+    wire [31:0] rd1OrInput = extraInp ? inputExpanded : rd1;
+    wire [31:0] srcB = extraInp ? 32'b0 : (aluSrc ? signImm : rd2);
+    
     //alu
-    wire [31:0] srcB = aluSrc ? signImm : rd2;
-
     sm_alu alu
     (
-        .srcA       ( rd1          ),
+        .srcA       ( rd1OrInput   ),
         .srcB       ( srcB         ),
         .oper       ( aluControl   ),
         .shift      ( instr[10:6 ] ),
-        .extraInput ( extraInput   ),
         .zero       ( aluZero      ),
         .result     ( wd3          ) 
     );
@@ -92,8 +96,8 @@ module sm_cpu
         .cmdOper    ( instr[31:26] ),
         .cmdFunk    ( instr[ 5:0 ] ),
         .aluZero    ( aluZero      ),
-        .extraInput ( extraInput ),
         .pcJ        ( pcJ          ),
+        .extraInp   ( extraInp     ),
         .pcSrc      ( pcSrc        ), 
         .regDst     ( regDst       ), 
         .regWrite   ( regWrite     ), 
@@ -108,9 +112,9 @@ module sm_control
     input      [5:0] cmdOper,
     input      [5:0] cmdFunk,
     input            aluZero,
-    input      [7:0] extraInput,
+    output           pcSrc,
     output reg       pcJ,
-    output           pcSrc, 
+    output reg       extraInp, 
     output reg       regDst, 
     output reg       regWrite, 
     output reg       aluSrc,
@@ -127,6 +131,7 @@ module sm_control
         regWrite    = 1'b0;
         aluSrc      = 1'b0;
         pcJ         = 1'b0;
+        extraInp    = 1'b0;
         aluControl  = `ALU_ADD;
         
         casez( {cmdOper,cmdFunk} )
@@ -146,9 +151,10 @@ module sm_control
             
             { `C_J,     `F_ANY  } : begin pcJ = 1'b1; end // J
             { `C_SPEC2, `F_MUL  } : begin regDst = 1'b1; regWrite = 1'b1; aluControl = `ALU_MUL; end // MUL
+            { `C_SPEC,  `F_AND  } : begin regDst = 1'b1; regWrite = 1'b1; aluControl = `ALU_AND; end // AND
             { `C_ORI,   `F_ANY  } : begin regWrite = 1'b1; aluSrc = 1'b1; aluControl = `ALU_OR;  end // ORI
 
-            { `C_LOAD,  `F_ANY }  : begin regWrite = 1'b1; aluSrc = 1'b1; aluControl = `ALU_LOAD; end 
+            { `C_LOAD,  `F_ANY }  : begin regWrite = 1'b1; aluSrc = 1'b1; extraInp = 1'b1; aluControl = `ALU_ADD; end 
         endcase
     end
 endmodule
@@ -159,7 +165,6 @@ module sm_alu
     input  [31:0] srcB,
     input  [ 2:0] oper,
     input  [ 4:0] shift,
-    input  [ 7:0] extraInput,
     output        zero,
     output reg [31:0] result
 );
@@ -173,18 +178,10 @@ module sm_alu
             `ALU_SLTU : result = (srcA < srcB) ? 1 : 0;
             `ALU_SUBU : result = srcA - srcB;
             `ALU_MUL  : result = srcA * srcB; // MUL
-            `ALU_LOAD : parityBit(extraInput, result); // load from input and set the parity bit if necessary
+            `ALU_AND  : result = srcA & srcB; // AND
         endcase
     end
     
-    task parityBit;
-    input [7:0] in;
-    output reg [31:0] out;
-    begin
-        out = (srcB == 1) ? {in, {32-8{(in[0] ^ in[1]) ^ (in[2] ^ in[3]) ^ (in[4] ^ in[5]) ^ (in[6] ^ in[7])}}}: in;
-    end
-	 endtask
-
     assign zero   = (result == 0);
 endmodule
 
