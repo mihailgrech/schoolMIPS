@@ -7,7 +7,7 @@ module sm_testbench;
 
     // simulation options
     parameter Tt     = 20;
-    parameter Ncycle = 120;
+    parameter Ncycle = 240;
 
     reg         clk;
     reg         rst_n;
@@ -24,13 +24,13 @@ module sm_testbench;
     //cpu core
     sm_cpu sm_cpu
     (
-        .clk     ( clk     ),
-        .rst_n   ( rst_n   ),
+        .clk        ( clk        ),
+        .rst_n      ( rst_n      ),
         .extraInput ( extraInput ),
-        .regAddr ( regAddr ),
-        .regData ( regData ),
-        .imAddr  ( imAddr  ),
-        .imData  ( imData  )
+        .regAddr    ( regAddr    ),
+        .regData    ( regData    ),
+        .imAddr     ( imAddr     ),
+        .imData     ( imData     )
     );
 
     // ***** DUT  end  ************************
