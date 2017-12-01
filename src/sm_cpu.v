@@ -122,9 +122,9 @@ module sm_control
         regDst      = 1'b0;
         regWrite    = 1'b0;
         aluSrc      = 1'b0;
+        pcJ         = 1'b0;
         aluControl  = `ALU_ADD;
         
-        pcJ = 1'b0;
         casez( {cmdOper,cmdFunk} )
             default               : ;
 
@@ -140,7 +140,7 @@ module sm_control
             { `C_BEQ,   `F_ANY  } : begin branch = 1'b1; condZero = 1'b1; aluControl = `ALU_SUBU; end
             { `C_BNE,   `F_ANY  } : begin branch = 1'b1; aluControl = `ALU_SUBU; end
             
-            { `C_J,     `F_ANY  } : begin regWrite = 1'b0; pcJ = 1'b1; end // J
+            { `C_J,     `F_ANY  } : begin pcJ = 1'b1; end // J
             { `C_SPEC2, `F_MUL  } : begin regDst = 1'b1; regWrite = 1'b1; aluControl = `ALU_MUL; end // MUL
             { `C_SPEC,  `F_AND  } : begin regDst = 1'b1; regWrite = 1'b1; aluControl = `ALU_AND; end // AND
             { `C_ORI,   `F_ANY  } : begin regWrite = 1'b1; aluSrc = 1'b1; aluControl = `ALU_OR;  end // ORI
