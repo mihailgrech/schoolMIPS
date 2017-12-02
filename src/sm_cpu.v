@@ -20,7 +20,7 @@ module sm_cpu
     output  [31:0]  imAddr,     // instruction memory address
     input   [31:0]  imData      // instruction memory data
 );
-    //assign extraInput = 8'b00101010; // comment it out when dip is used
+    //assign extraInput = 8'b01101000; // comment it out when dip is used
     //control wires
     wire        pcSrc;
     wire        regDst;
@@ -80,7 +80,7 @@ module sm_cpu
     
     //take a value either from alu or additional input
     wire parityBit = (extraInput[0] ^ extraInput[1]) ^ (extraInput[2] ^ extraInput[3]) ^ (extraInput[4] ^ extraInput[5]) ^ (extraInput[6] ^ extraInput[7]);
-    wire [31:0] inputExpanded = srcB ? {extraInput, {32-8{parityBit}}} : extraInput;
+    wire [31:0] inputExpanded = srcB ? {{1'b0, {23{parityBit}}}, extraInput} : extraInput;
     assign newWd3 = extraInp ? inputExpanded : wd3;
     
     //alu
@@ -158,7 +158,7 @@ module sm_control
             { `C_SPEC,  `F_AND  } : begin regDst = 1'b1; regWrite = 1'b1; aluControl = `ALU_AND; end // AND
             { `C_ORI,   `F_ANY  } : begin regWrite = 1'b1; aluSrc = 1'b1; aluControl = `ALU_OR;  end // ORI
 
-            { `C_LOAD,  `F_ANY }  : begin regWrite = 1'b1; aluSrc = 1'b1; extraInp = 1'b1; aluControl = `ALU_ADD; end 
+            { `C_LOAD,  `F_ANY }  : begin regWrite = 1'b1; aluSrc = 1'b1; extraInp = 1'b1; end 
         endcase
     end
 endmodule
