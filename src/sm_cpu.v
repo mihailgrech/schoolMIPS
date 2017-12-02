@@ -20,7 +20,7 @@ module sm_cpu
     output  [31:0]  imAddr,     // instruction memory address
     input   [31:0]  imData      // instruction memory data
 );
-    assign extraInput = 8'b00101010; // comment it out when dip is used
+    //assign extraInput = 8'b00101010; // comment it out when dip is used
     //control wires
     wire        pcSrc;
     wire        regDst;
