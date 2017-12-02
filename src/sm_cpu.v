@@ -55,7 +55,8 @@ module sm_cpu
     wire [31:0] rd1;
     wire [31:0] rd2;
     wire [31:0] wd3;
-
+    wire [31:0] newWd3;
+    
     sm_register_file rf
     (
         .clk        ( clk          ),
@@ -66,7 +67,7 @@ module sm_cpu
         .rd0        ( rd0          ),
         .rd1        ( rd1          ),
         .rd2        ( rd2          ),
-        .wd3        ( wd3          ),
+        .wd3        ( newWd3       ),
         .we3        ( regWrite     )
     );
 
@@ -74,15 +75,18 @@ module sm_cpu
     wire [31:0] signImm = { {16 { instr[15] }}, instr[15:0] };
     assign pcBranch = pcNext + signImm;
     
-    // lab 2 additional input 
-    wire [31:0] inputExpanded = {extraInput, {32-8{(extraInput[0] ^ extraInput[1]) ^ (extraInput[2] ^ extraInput[3]) ^ (extraInput[4] ^ extraInput[5]) ^ (extraInput[6] ^ extraInput[7])}}};
-    wire [31:0] rd1OrInput = extraInp ? inputExpanded : rd1;
-    wire [31:0] srcB = extraInp ? 32'b0 : (aluSrc ? signImm : rd2);
+    wire [31:0] srcB = aluSrc ? signImm : rd2;
+    
+    
+    //take a value either from alu or additional input
+    wire parityBit = (extraInput[0] ^ extraInput[1]) ^ (extraInput[2] ^ extraInput[3]) ^ (extraInput[4] ^ extraInput[5]) ^ (extraInput[6] ^ extraInput[7]);
+    wire [31:0] inputExpanded = srcB ? {extraInput, {32-8{parityBit}}} : extraInput;
+    assign newWd3 = extraInp ? inputExpanded : wd3;
     
     //alu
     sm_alu alu
     (
-        .srcA       ( rd1OrInput   ),
+        .srcA       ( rd1          ),
         .srcB       ( srcB         ),
         .oper       ( aluControl   ),
         .shift      ( instr[10:6 ] ),
