@@ -19,7 +19,7 @@
         .text
 
 init:   li      $a0, 82         ## x = 82
-        ## take a look at example №6 --> 9ca40000
+        ## take a look at example №6 --> 9ca40001
         ## LOAD $a0             ## Load from additional input to a0 register
         li      $v0, 0          ## calculation result reset
 

@@ -3,7 +3,7 @@
             .text
 
 start:      
-            li      $a0, 0 ## change to 9ca40000
+            li      $a0, 0              ## change to 9ca40001
             move    $t0, $0
             li      $t1, 1
             move    $v0, $t1
