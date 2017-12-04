@@ -43,7 +43,7 @@ module marsohod_2_top(
     assign LED[3:0] = regData[7:4];
 	 
 	 // 7 segment indicator
-	 wire [31:0] h7segment = 8'b10101011;//regData; // display it on a seven segment indicator
+	 wire [31:0] h7segment = to7segmentFromMem; // display it on a seven segment indicator
 	 wire [11:0] seven_segments; // 12 bit to control segments of the indicator
 
 	 // get 7bit number for the indicator
@@ -69,8 +69,8 @@ module marsohod_2_top(
 	 assign GPIO0_D[10] = seven_segments[1];  // d
 	 assign GPIO0_D[11] = seven_segments[0];  // e
 	 
-	 assign GPIO0_D[12] = seven_segments[11];
+	 assign GPIO0_D[12] = seven_segments[7];
 	 assign GPIO1_D[5]  = seven_segments[8];
-	 assign GPIO1_D[6]  = seven_segments[7];	 
+	 assign GPIO1_D[6]  = seven_segments[11];	 
 
 endmodule
