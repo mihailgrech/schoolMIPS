@@ -80,7 +80,7 @@ module sm_cpu
     
     //take a value either from alu or additional input
     wire parityBit = (extraInput[0] ^ extraInput[1]) ^ (extraInput[2] ^ extraInput[3]) ^ (extraInput[4] ^ extraInput[5]) ^ (extraInput[6] ^ extraInput[7]);
-    wire [31:0] inputExpanded = srcB ? {{1'b0, {23{parityBit}}}, extraInput} : extraInput;
+    wire [31:0] inputExpanded = instr[0] ? {{1'b0, {23{parityBit}}}, extraInput} : extraInput;
     assign newWd3 = extraInp ? inputExpanded : wd3;
     
     //alu

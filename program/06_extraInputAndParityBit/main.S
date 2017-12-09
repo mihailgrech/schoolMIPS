@@ -1,10 +1,11 @@
-  init:
-    li $a0, 15
+init:
+        li  $a0, 15
+end:    b   end
     ## have to replace this command with the one before in the hex file directly
     ## LOAD
     ##
     ## F_LOAD | rs    | rt    | immediate
-    ## 100111 | 00101 | 00100 | 000000000000000(1) = 9ca40001
+    ## 100111 | xxxxx | 00100 | xxxxxxxxxxxxxxx(1) = 9ca40001
     ## see sm_cpu.vh  |       | see sm_cpu.v     | convert bin to hex
     ## This program takes value from non-architectural input,
     ## expands it with parity bits up to 32 bits optionally and
