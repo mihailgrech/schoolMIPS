@@ -22,7 +22,7 @@ module marsohod_3(
         .clkDevide  ( 4'b1000   ),
         .clkEnable  ( clkEnable ),
         .clk        ( clk       ),
-        .regAddr    ( 4'b0010   ),
+        .regAddr    ( 5'b00010  ),
         .regData    ( regData   )
     );
 
