@@ -24,7 +24,7 @@
 `define ENABLE_SW
 `define ENABLE_UART
 
-module golden_top(
+module max_10_neek(
 
 `ifdef ENABLE_ADC
       ///////// ADC 3.3 V /////////
