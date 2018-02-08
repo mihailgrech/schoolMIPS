@@ -107,6 +107,22 @@
          type = "String";
       }
    }
+   element reg32_avalon_interface_0
+   {
+      datum _sortIndex
+      {
+         value = "6";
+         type = "int";
+      }
+   }
+   element reg32_avalon_interface_0.avalon_slave_0
+   {
+      datum baseAddress
+      {
+         value = "8232";
+         type = "String";
+      }
+   }
    element switches
    {
       datum _sortIndex
@@ -134,9 +150,9 @@
 }
 ]]></parameter>
  <parameter name="clockCrossingAdapter" value="HANDSHAKE" />
- <parameter name="device" value="5CSEMA5F31C6" />
+ <parameter name="device" value="5CSXFC6D6F31C6" />
  <parameter name="deviceFamily" value="Cyclone V" />
- <parameter name="deviceSpeedGrade" value="6" />
+ <parameter name="deviceSpeedGrade" value="6_H6" />
  <parameter name="fabricMode" value="QSYS" />
  <parameter name="generateLegacySim" value="false" />
  <parameter name="generationId" value="0" />
@@ -145,7 +161,7 @@
  <parameter name="hideFromIPCatalog" value="false" />
  <parameter name="lockedInterfaceDefinition" value="" />
  <parameter name="maxAdditionalLatency" value="1" />
- <parameter name="projectName" value="de1_soc.qpf" />
+ <parameter name="projectName" value="de10_standard.qpf" />
  <parameter name="sopcBorderPoints" value="false" />
  <parameter name="systemHash" value="0" />
  <parameter name="testBenchDutName" value="" />
@@ -162,6 +178,11 @@
  <interface
    name="switches"
    internal="switches.external_connection"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="to_hex"
+   internal="reg32_avalon_interface_0.conduit_end"
    type="conduit"
    dir="end" />
  <module name="LEDs" kind="altera_avalon_pio" version="16.1" enabled="1">
@@ -217,7 +238,7 @@
   <parameter name="cpuReset" value="false" />
   <parameter name="customInstSlavesSystemInfo" value="&lt;info/&gt;" />
   <parameter name="dataAddrWidth" value="14" />
-  <parameter name="dataSlaveMapParam"><![CDATA[<address-map><slave name='onchip_memory.s1' start='0x0' end='0x1000' /><slave name='nios2_processor.jtag_debug_module' start='0x1800' end='0x2000' /><slave name='LEDs.s1' start='0x2000' end='0x2010' /><slave name='switches.s1' start='0x2010' end='0x2020' /><slave name='jtag_uart.avalon_jtag_slave' start='0x2020' end='0x2028' /></address-map>]]></parameter>
+  <parameter name="dataSlaveMapParam"><![CDATA[<address-map><slave name='onchip_memory.s1' start='0x0' end='0x1000' /><slave name='nios2_processor.jtag_debug_module' start='0x1800' end='0x2000' /><slave name='LEDs.s1' start='0x2000' end='0x2010' /><slave name='switches.s1' start='0x2010' end='0x2020' /><slave name='jtag_uart.avalon_jtag_slave' start='0x2020' end='0x2028' /><slave name='reg32_avalon_interface_0.avalon_slave_0' start='0x2028' end='0x202C' /></address-map>]]></parameter>
   <parameter name="dcache_bursts" value="false" />
   <parameter name="dcache_lineSize" value="32" />
   <parameter name="dcache_numTCDM" value="0" />
@@ -366,6 +387,11 @@
   <parameter name="useShallowMemBlocks" value="false" />
   <parameter name="writable" value="true" />
  </module>
+ <module
+   name="reg32_avalon_interface_0"
+   kind="reg32_avalon_interface"
+   version="1.0"
+   enabled="1" />
  <module name="switches" kind="altera_avalon_pio" version="16.1" enabled="1">
   <parameter name="bitClearingEdgeCapReg" value="false" />
   <parameter name="bitModifyingOutReg" value="false" />
@@ -387,6 +413,15 @@
    end="jtag_uart.avalon_jtag_slave">
   <parameter name="arbitrationPriority" value="1" />
   <parameter name="baseAddress" value="0x2020" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="16.1"
+   start="nios2_processor.data_master"
+   end="reg32_avalon_interface_0.avalon_slave_0">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x2028" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -457,12 +492,22 @@
    start="clk_0.clk"
    end="onchip_memory.clk1" />
  <connection
+   kind="clock"
+   version="16.1"
+   start="clk_0.clk"
+   end="reg32_avalon_interface_0.clock_sink" />
+ <connection
    kind="interrupt"
    version="16.1"
    start="nios2_processor.d_irq"
    end="jtag_uart.irq">
   <parameter name="irqNumber" value="5" />
  </connection>
+ <connection
+   kind="reset"
+   version="16.1"
+   start="clk_0.clk_reset"
+   end="reg32_avalon_interface_0.clock_reset" />
  <connection
    kind="reset"
    version="16.1"
