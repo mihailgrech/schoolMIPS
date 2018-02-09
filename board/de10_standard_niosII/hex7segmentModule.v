@@ -9,7 +9,6 @@ module hex7segmentModule (hex, display);
     * 4 | | 2
     * – 3 –
     */
-
     always @ (hex)
         case (hex)
             4'h0: display = 8'b1000000;  // a b c d e f g

@@ -3,7 +3,6 @@ module reg32 (clock, resetn, D, byteenable, Q);
     input [3:0] byteenable;
     input [31:0] D;
     output reg [31:0] Q;
-
     
     always@ (posedge clock)
         if (!resetn)

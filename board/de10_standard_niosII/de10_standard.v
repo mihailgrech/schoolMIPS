@@ -27,7 +27,7 @@ module de10_standard
 	wire [ 31:0 ] h7segment;    
 	nios_system NIOSII
 	(
-		.clk_clk		     ( clkIn     ),
+		.clk_clk		 ( clkIn     ),
 		.leds_export     ( LEDR[7:0] ),
 		.reset_reset_n   ( rst_n     ),
 		.switches_export ( SW[7:0]   ),
