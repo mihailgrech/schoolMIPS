@@ -194,11 +194,12 @@ module de1_soc(
     wire          clkIn     =  CLOCK_50;
     wire          rst_n     =  KEY[0];
 
-	 nios_system NIOSII (
-			.clk_clk(clkIn),
-			.leds_export(LEDR[7:0]), // 0 is for clock
-			.reset_reset_n(rst_n),
-			.switches_export(SW[7:0])
+	nios_system NIOSII
+    (
+        .clk_clk         ( clkIn     ),
+		.leds_export     ( LEDR[7:0] ),
+		.reset_reset_n   ( rst_n     ),
+		.switches_export ( SW[7:0]   )
 	);
 
 endmodule
